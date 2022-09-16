@@ -308,17 +308,22 @@ class VrtNUIE(GigyaBaseIE):
         episode_data = self._download_json(f'{url.strip("/")}.model.json', display_id,
                         'Downloading asset JSON', 'Unable to download asset JSON')
         details = episode_data.get('details')
+        data = details.get('data')
         actions = details.get('actions')
         episode_publication_id = actions[2].get('episodePublicationId')
         episode_video_id = actions[2].get('episodeVideoId')
         video_id = f'{episode_publication_id}${episode_video_id}'
+        season = data.get('season').get('name')
+        number = data.get('episode').get('number').get('raw')
 
         return {
             '_type': 'url_transparent',
             'url': 'https://media-services-public.vrt.be/media-aggregator/v2/media-items/%s' % video_id,
             'ie_key': 'Canvas',
             'id': video_id,
-            'display_id': display_id
+            'display_id': display_id,
+            'season_number': int_or_none(season),
+            'episode_number': int_or_none(number)
         }
 
 
